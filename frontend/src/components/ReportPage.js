@@ -45,7 +45,7 @@ function ReportPage() {
                             <path d="M9 12h6M9 8h6M9 16h4" />
                         </svg>
                     </div>
-                    <span className="report-header-title">SDE Assessment</span>
+                    <span className="report-header-title">Quiz Results</span>
                 </div>
 
                 <div className="report-header-right">
@@ -76,9 +76,8 @@ function ReportPage() {
                             </svg>
                             {passed ? 'Passed' : 'Failed'}
                         </div>
-                        <h1 className="summary-title">Assessment Complete</h1>
+                        <h1 className="summary-title">Quiz Complete</h1>
                         <p className="summary-subtitle">
-                            You've successfully completed the Software Development Engineer assessment.
                             Review your detailed performance breakdown below.
                         </p>
                     </div>

@@ -1,156 +1,48 @@
 import React, { createContext, useContext, useReducer } from 'react';
 
-// Quiz questions data
-const quizQuestions = [
-    {
-        id: 1,
-        category: 'JavaScript',
-        difficulty: 'easy',
-        question: 'What is the output of 2+2 in JS?',
-        options: ['3', '4', '22', 'undefined'],
-        correctAnswer: 1
-    },
-    {
-        id: 2,
-        category: 'Web Development',
-        difficulty: 'medium',
-        question: 'Which HTTP method is used to update resources?',
-        options: ['GET', 'POST', 'PUT', 'DELETE'],
-        correctAnswer: 2
-    },
-    {
-        id: 3,
-        category: 'Databases',
-        difficulty: 'easy',
-        question: 'What does SQL stand for?',
-        options: ['Simple Query Language', 'Structured Query Language', 'Standard Query Logic', 'System Query Language'],
-        correctAnswer: 1
-    },
-    {
-        id: 4,
-        category: 'Programming',
-        difficulty: 'medium',
-        question: 'Who created Python?',
-        options: ['Dennis Ritchie', 'James Gosling', 'Guido van Rossum', 'Bjarne Stroustrup'],
-        correctAnswer: 2
-    },
-    {
-        id: 5,
-        category: 'JavaScript',
-        difficulty: 'easy',
-        question: 'Is Java same as JavaScript?',
-        options: ['Yes', 'No'],
-        correctAnswer: 1
-    },
-    {
-        id: 6,
-        category: 'Algorithms',
-        difficulty: 'medium',
-        question: 'What is the complexity of binary search?',
-        options: ['O(n)', 'O(log n)', 'O(n²)', 'O(1)'],
-        correctAnswer: 1
-    },
-    {
-        id: 7,
-        category: 'Web Development',
-        difficulty: 'easy',
-        question: 'What is CSS used for?',
-        options: ['Programming', 'Styling', 'Database', 'Networking'],
-        correctAnswer: 1
-    },
-    {
-        id: 8,
-        category: 'React',
-        difficulty: 'medium',
-        question: 'What is a React Hook?',
-        options: ['A class', 'A function', 'An object', 'A component'],
-        correctAnswer: 1
-    },
-    {
-        id: 9,
-        category: 'Web Development',
-        difficulty: 'easy',
-        question: 'What does JSON stand for?',
-        options: ['Java Standard Object Notation', 'JavaScript Object Notation', 'Java Source Object Network', 'JavaScript Online Notation'],
-        correctAnswer: 1
-    },
-    {
-        id: 10,
-        category: 'JavaScript',
-        difficulty: 'medium',
-        question: 'Is 10 == "10" true in JS?',
-        options: ['True', 'False'],
-        correctAnswer: 0
-    },
-    {
-        id: 11,
-        category: 'Networking',
-        difficulty: 'easy',
-        question: 'What is the port for HTTP?',
-        options: ['443', '80', '22', '21'],
-        correctAnswer: 1
-    },
-    {
-        id: 12,
-        category: 'Tools',
-        difficulty: 'easy',
-        question: 'What is Git?',
-        options: ['IDE', 'VCS', 'Database', 'Framework'],
-        correctAnswer: 1
-    },
-    {
-        id: 13,
-        category: 'Tools',
-        difficulty: 'easy',
-        question: 'Command to clone repo?',
-        options: ['git copy', 'git clone', 'git duplicate', 'git download'],
-        correctAnswer: 1
-    },
-    {
-        id: 14,
-        category: 'DevOps',
-        difficulty: 'medium',
-        question: 'What is Docker?',
-        options: ['Virtualization', 'Containerization', 'Orchestration', 'Compilation'],
-        correctAnswer: 1
-    },
-    {
-        id: 15,
-        category: 'JavaScript',
-        difficulty: 'hard',
-        question: 'Output of console.log(typeof NaN)?',
-        options: ['NaN', 'undefined', 'number', 'object'],
-        correctAnswer: 2
-    }
-];
+const API_URL = 'http://localhost:5000/api/quiz';
 
 const QuizContext = createContext();
 
 const initialState = {
     email: '',
-    questions: quizQuestions,
+    quizId: null,
+    questions: [],
+    questionsWithAnswers: [],
     currentQuestion: 0,
     answers: {},
     visitedQuestions: new Set([0]),
     timeRemaining: 30 * 60,
     timeTaken: 0,
     quizStarted: false,
-    quizCompleted: false
+    quizCompleted: false,
+    loading: false,
+    error: null
 };
 
 const quizReducer = (state, action) => {
     switch (action.type) {
+        case 'SET_LOADING':
+            return { ...state, loading: action.payload, error: null };
+
+        case 'SET_ERROR':
+            return { ...state, error: action.payload, loading: false };
+
         case 'START_QUIZ':
             return {
                 ...state,
-                email: action.payload,
+                email: action.payload.email,
+                quizId: action.payload.quizId,
+                questions: action.payload.questions,
+                questionsWithAnswers: action.payload.questionsWithAnswers || [],
                 quizStarted: true,
                 currentQuestion: 0,
                 answers: {},
                 visitedQuestions: new Set([0]),
-                timeRemaining: 30 * 60,
+                timeRemaining: action.payload.timeLimit || 30 * 60,
                 timeTaken: 0,
-                quizCompleted: false
+                quizCompleted: false,
+                loading: false
             };
 
         case 'SET_CURRENT_QUESTION':
@@ -172,16 +64,14 @@ const quizReducer = (state, action) => {
             };
 
         case 'UPDATE_TIMER':
-            return {
-                ...state,
-                timeRemaining: action.payload
-            };
+            return { ...state, timeRemaining: action.payload };
 
         case 'COMPLETE_QUIZ':
             return {
                 ...state,
                 quizCompleted: true,
-                timeTaken: (30 * 60) - state.timeRemaining
+                timeTaken: (30 * 60) - state.timeRemaining,
+                questionsWithAnswers: action.payload?.questionsWithAnswers || state.questionsWithAnswers
             };
 
         case 'RESET_QUIZ':
@@ -201,9 +91,34 @@ export const QuizProvider = ({ children }) => {
         visitedQuestions: new Set([0])
     });
 
-    // Helper functions
-    const startQuiz = (email) => {
-        dispatch({ type: 'START_QUIZ', payload: email });
+    const startQuiz = async (email) => {
+        dispatch({ type: 'SET_LOADING', payload: true });
+
+        try {
+            const response = await fetch(`${API_URL}/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to start quiz');
+            }
+
+            const data = await response.json();
+
+            dispatch({
+                type: 'START_QUIZ',
+                payload: {
+                    email,
+                    quizId: data.quizId,
+                    questions: data.questions,
+                    timeLimit: data.timeLimit
+                }
+            });
+        } catch (error) {
+            dispatch({ type: 'SET_ERROR', payload: error.message });
+        }
     };
 
     const setCurrentQuestion = (index) => {
@@ -218,39 +133,65 @@ export const QuizProvider = ({ children }) => {
         dispatch({ type: 'UPDATE_TIMER', payload: seconds });
     };
 
-    const completeQuiz = () => {
-        dispatch({ type: 'COMPLETE_QUIZ' });
+    const completeQuiz = async () => {
+        const timeTaken = (30 * 60) - state.timeRemaining;
+
+        try {
+            const response = await fetch(`${API_URL}/submit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    quizId: state.quizId,
+                    answers: state.answers,
+                    timeTaken
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to submit quiz');
+            }
+
+            const data = await response.json();
+
+            // Store results for getResults
+            dispatch({
+                type: 'COMPLETE_QUIZ',
+                payload: { questionsWithAnswers: data.results }
+            });
+        } catch (error) {
+            // Still complete quiz even if API fails
+            dispatch({ type: 'COMPLETE_QUIZ', payload: {} });
+        }
     };
 
     const resetQuiz = () => {
         dispatch({ type: 'RESET_QUIZ' });
     };
 
-    // Calculate results
     const getResults = () => {
-        const results = state.questions.map((q, index) => {
-            const userAnswerIndex = state.answers[index];
-            const isCorrect = userAnswerIndex === q.correctAnswer;
-            return {
-                id: q.id,
-                question: q.question,
-                category: q.category,
-                userAnswer: userAnswerIndex !== undefined ? q.options[userAnswerIndex] : 'Not answered',
-                correctAnswer: q.options[q.correctAnswer],
-                isCorrect: userAnswerIndex !== undefined && isCorrect,
-                wasAnswered: userAnswerIndex !== undefined
-            };
-        });
+        const results = state.questionsWithAnswers.length > 0
+            ? state.questionsWithAnswers
+            : state.questions.map((q, index) => {
+                const userAnswerIndex = state.answers[index];
+                return {
+                    id: q.id,
+                    question: q.question,
+                    category: q.category,
+                    userAnswer: userAnswerIndex !== undefined ? q.options[userAnswerIndex] : 'Not answered',
+                    correctAnswer: 'N/A',
+                    isCorrect: false,
+                    wasAnswered: userAnswerIndex !== undefined
+                };
+            });
 
         const correctCount = results.filter(r => r.isCorrect).length;
-        const answeredCount = results.filter(r => r.wasAnswered).length;
         const scorePercent = Math.round((correctCount / state.questions.length) * 100);
 
         return {
             results,
             correctCount,
             incorrectCount: state.questions.length - correctCount,
-            answeredCount,
+            answeredCount: results.filter(r => r.wasAnswered).length,
             totalQuestions: state.questions.length,
             scorePercent,
             passed: scorePercent >= 50

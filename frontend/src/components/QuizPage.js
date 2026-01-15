@@ -86,22 +86,16 @@ function QuizPage() {
                             <path d="M9 12h6M9 8h6M9 16h4" />
                         </svg>
                     </div>
-                    <span className="header-title">CausalFunnel SDE Assessment</span>
+                    <span className="header-title">CausalFunnel Quiz Application</span>
                 </div>
 
                 <div className="header-right">
-                    <div className="time-display">
-                        <div>
-                            <div className="time-label">Time Remaining</div>
-                            <div className="time-value">{formatTime(timeRemaining)}</div>
-                        </div>
-                        <div className={`time-badge ${timeRemaining < 300 ? 'time-warning' : ''}`}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M12 6v6l4 2" />
-                            </svg>
-                            {formatTime(timeRemaining)}
-                        </div>
+                    <div className={`time-badge ${timeRemaining < 300 ? 'time-warning' : ''}`}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 6v6l4 2" />
+                        </svg>
+                        {formatTime(timeRemaining)}
                     </div>
                 </div>
             </header>
@@ -221,7 +215,7 @@ function QuizPage() {
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
                             </svg>
-                            Submit Assessment
+                            Submit Quiz
                         </button>
                         <p className="save-note">All progress is saved automatically.</p>
                     </div>

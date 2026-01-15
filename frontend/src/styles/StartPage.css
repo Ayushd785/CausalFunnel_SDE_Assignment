@@ -156,3 +156,26 @@
     font-size: 13px;
     color: #555555;
 }
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+    .start-page {
+        padding: 16px;
+    }
+
+    .start-card {
+        max-width: 100%;
+    }
+
+    .card-content {
+        padding: 28px 20px;
+    }
+
+    .card-title {
+        font-size: 20px;
+    }
+
+    .card-subtitle {
+        font-size: 13px;
+    }
+}
