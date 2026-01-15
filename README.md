@@ -6,7 +6,7 @@ A full-stack quiz application that fetches trivia questions from OpenTDB API, le
 
 ## 🌐 Live Demo
 
-- **Frontend**: [Deploy your frontend here]
+- **Frontend**: https://causal-funnel-sde-assignment.vercel.app/
 - **Backend API**: https://causal-funnel-sde-assignment-9zcs.vercel.app
 
 ## 🏗️ Architecture
