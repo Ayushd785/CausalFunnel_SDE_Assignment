@@ -1,0 +1,158 @@
+/* Start Page Styles - Dark Minimal */
+.start-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.start-card {
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    border: 1px solid #2a2a2a;
+    width: 100%;
+    max-width: 420px;
+    overflow: hidden;
+}
+
+.card-accent {
+    height: 3px;
+    background-color: #3b82f6;
+}
+
+.card-content {
+    padding: 40px 32px;
+    text-align: center;
+}
+
+.quiz-icon {
+    width: 48px;
+    height: 48px;
+    background-color: #3b82f6;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.quiz-icon svg {
+    width: 24px;
+    height: 24px;
+    color: white;
+}
+
+.card-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.card-subtitle {
+    font-size: 14px;
+    color: #888888;
+    margin-bottom: 28px;
+    line-height: 1.5;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #cccccc;
+    margin-bottom: 8px;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666666;
+}
+
+.email-input {
+    width: 100%;
+    padding: 14px 14px 14px 44px;
+    font-size: 15px;
+    background-color: #0f0f0f;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    color: #ffffff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.email-input:focus {
+    border-color: #3b82f6;
+}
+
+.email-input::placeholder {
+    color: #555555;
+}
+
+.start-button {
+    width: 100%;
+    padding: 14px 24px;
+    background-color: #3b82f6;
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
+}
+
+.start-button:hover {
+    background-color: #2563eb;
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+}
+
+.start-button:disabled {
+    background-color: #333333;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+.card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    font-size: 13px;
+    color: #666666;
+}
+
+.footer-divider {
+    color: #444444;
+}
+
+.secure-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #555555;
+}
