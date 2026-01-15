@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer } from 'react';
 
-const API_URL = 'http://localhost:5000/api/quiz';
+const API_URL = 'https://causal-funnel-sde-assignment-9zcs.vercel.app/api/quiz';
 
 const QuizContext = createContext();
 
